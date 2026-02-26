@@ -17,7 +17,7 @@ Clone the repo and run the automated setup:
 
 ```bash
 # Clone
-git clone <repository-url>
+git clone https://github.com/Hammad324/AuthGrid.git
 cd AuthGrid/backend
 
 # Copy environment variables
