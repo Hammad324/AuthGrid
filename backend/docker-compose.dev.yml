@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16.2
+    container_name: auth_postgres_dev
+    restart: always
+    environment:
+      POSTGRES_USER: dev_user
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: auth_dev_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-init.db.d/init.sql
+
+volumes:
+  pgdata_dev:
