@@ -51,7 +51,7 @@ Prisma Studio provides a clean web interface to view and edit your data.
     ```
 
 > [!TIP]
-> Use `db:studio:test` after running integration tests to see exactly what records were created during the test run!
+> Use `db:studio:test` after running integration test for the prisma service to see exactly what records were created during the test run!
 
 ### 3. Start Development
 ```bash
@@ -59,9 +59,19 @@ npm run start:dev
 ```
 
 ## 🧪 Testing
-Run the integration tests to verify your setup:
+Note: The `npm run setup` command already initializes the testing database. You only need to run the setup command below if you've reset your environment or want to refresh the test schema.
+
+```bash
+npm run test:setup
+```
+
+Run unit tests:
+```bash
+npm run test:unit
+``` 
+
+Run integration tests:
 ```bash
 npm run test:integration
 ```
-
 ---
