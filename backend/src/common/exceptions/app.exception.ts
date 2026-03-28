@@ -26,6 +26,12 @@ export class NotFoundException extends AppException {
   }
 }
 
+export class AlreadyExistsException extends AppException {
+  constructor(message = 'User Already Exists', metadata?: AppExceptionMetadata) {
+    super(message, 'USER_ALREADY_EXISTS', HttpStatus.CONFLICT, metadata);
+  }
+}
+
 export class UnauthorizedException extends AppException {
   constructor(message = 'Unauthorized', metadata?: AppExceptionMetadata) {
     super(message, 'UNAUTHORIZED', HttpStatus.UNAUTHORIZED, metadata);
