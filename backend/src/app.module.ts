@@ -8,7 +8,11 @@ import { TenantsModule } from './tenants/tenants.module';
 import { AppsModule } from './apps/apps.module';
 
 @Module({
+<<<<<<< HEAD
   imports: [PrismaModule, UsersModule, AuthModule, TenantsModule, AppsModule],
+=======
+  imports: [PrismaModule, UsersModule, AuthModule],
+>>>>>>> 9454f0164128ef8aedef1019443c80c4d37b582f
   controllers: [AppController],
   providers: [AppService],
 })
