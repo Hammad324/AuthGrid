@@ -4,6 +4,7 @@ import { SignInDto } from './dto/sign_in.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LogoutDto } from './dto/logout.dto';
 import { AppTokenDto } from './dto/app-token.dto';
+import { RefreshDto } from './dto/refresh.dto';
 
 
 @Controller('auth')
@@ -13,6 +14,11 @@ export class AuthController {
   @Post('login')
   signIn(@Body() signInDto: SignInDto) {
     return this.authService.login(signInDto);
+  }
+
+  @Post('refresh')
+  refresh(@Body() refreshDto: RefreshDto) {
+    return this.authService.rotateRefreshToken(refreshDto.refreshToken);
   }
 
 

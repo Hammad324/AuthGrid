@@ -8,10 +8,6 @@ export class AuthRepository {
     constructor(private readonly prisma: PrismaService) {}
 
     async validateUser(signInDto: SignInDto) {
-        // get data from the service
-        // check if exists, then throw error 
-        // else return the user object
-
         const { email } = signInDto;
 
         const user = await this.prisma.user.findUnique({
@@ -26,8 +22,6 @@ export class AuthRepository {
     }
 
     async deleteToken(token: string) {
-        // console.log(token);
-        
         await this.prisma.refreshToken.delete({
             where: { token }
         })
@@ -36,6 +30,13 @@ export class AuthRepository {
     async saveRefreshToken(userId: string, token: string, expiresAt: Date) {
         return this.prisma.refreshToken.create({
             data: { userId, token, expiresAt }
+        });
+    }
+
+    async findToken(token: string) {
+        return this.prisma.refreshToken.findUnique({
+            where: { token },
+            include: { user: true }
         });
     }
 }

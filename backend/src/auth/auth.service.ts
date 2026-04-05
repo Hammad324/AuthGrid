@@ -15,6 +15,33 @@ export class AuthService {
     private readonly appsRepository: AppsRepository
   ) {}
 
+  async rotateRefreshToken(token: string) {
+    const tokenRecord = await this.authRepository.findToken(token);
+    
+    if (!tokenRecord) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    if (new Date() > tokenRecord.expiresAt) {
+      await this.authRepository.deleteToken(token);
+      throw new UnauthorizedException('Refresh token expired');
+    }
+
+    await this.authRepository.deleteToken(token);
+
+    const { user } = tokenRecord;
+    const payload = { sub: user.id, name: user.name, email: user.email };
+    
+    const accessToken = await this.jwtService.signAsync(payload);
+    const refreshToken = await this.jwtService.signAsync(payload, { expiresIn: '7d' });
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+    await this.authRepository.saveRefreshToken(user.id, refreshToken, expiresAt);
+
+    return { accessToken, refreshToken };
+  }
+
   async loginApp(appTokenDto: AppTokenDto) {
     const app = await this.appsRepository.findByClientId(appTokenDto.clientId);
     if (!app) {
