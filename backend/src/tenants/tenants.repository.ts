@@ -48,4 +48,12 @@ export class TenantsRepository {
             }
         });
     }
+
+    findMembership(userId: string, tenantId: string) {
+        return this.prisma.membership.findUnique({
+            where: {
+                userId_tenantId: { userId, tenantId }
+            }
+        });
+    }
 }
