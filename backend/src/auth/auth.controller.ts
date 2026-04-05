@@ -4,7 +4,7 @@ import { SignInDto } from './dto/sign_in.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LogoutDto } from './dto/logout.dto';
 import { AppTokenDto } from './dto/app-token.dto';
-// import { UpdateAuthDto } from './dto/update-auth.dto';
+
 
 @Controller('auth')
 export class AuthController {
@@ -14,6 +14,7 @@ export class AuthController {
   signIn(@Body() signInDto: SignInDto) {
     return this.authService.login(signInDto);
   }
+
 
   @Post('app/token')
   loginApp(@Body() appTokenDto: AppTokenDto) {
