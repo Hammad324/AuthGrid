@@ -4,11 +4,12 @@ import { TenantsController } from './tenants.controller';
 import { TenantsRepository } from './tenants.repository';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthModule } from 'src/auth/auth.module';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
     imports: [forwardRef(() => AuthModule)],
     controllers: [TenantsController],
-    providers: [TenantsService, TenantsRepository, PrismaService],
-    exports: [TenantsRepository],
+    providers: [TenantsService, TenantsRepository, PrismaService, RolesGuard],
+    exports: [TenantsRepository, RolesGuard],
 })
 export class TenantsModule {}
