@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign_in.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LogoutDto } from './dto/logout.dto';
+import { AppTokenDto } from './dto/app-token.dto';
 // import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @Controller('auth')
@@ -14,12 +15,17 @@ export class AuthController {
     return this.authService.login(signInDto);
   }
 
+  @Post('app/token')
+  loginApp(@Body() appTokenDto: AppTokenDto) {
+    return this.authService.loginApp(appTokenDto);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   logout(@Body() logoutDto: LogoutDto) {
     return this.authService.logout(logoutDto.refreshToken);
   }
-
+  
   // @Get()
   // findAll() {
   //   return this.authService.findAll();
