@@ -55,3 +55,9 @@ export class ValidationException extends AppException {
     super(message, 'VALIDATION_ERROR', HttpStatus.UNPROCESSABLE_ENTITY, metadata);
   }
 }
+
+export class SlugConflictException extends AppException {
+  constructor(message = 'A tenant with this name already exists', metadata?: AppExceptionMetadata) {
+    super(message, 'SLUG_CONFLICT', HttpStatus.CONFLICT, metadata);
+  }
+}
