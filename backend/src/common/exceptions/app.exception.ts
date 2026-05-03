@@ -61,3 +61,9 @@ export class SlugConflictException extends AppException {
     super(message, 'SLUG_CONFLICT', HttpStatus.CONFLICT, metadata);
   }
 }
+
+// export class InternalServerErrorException extends AppException {
+//   constructor(message = 'Internal Server Error', metadata?: AppExceptionMetadata) {
+//     super(message, 'INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR, metadata);
+//   }
+// }
