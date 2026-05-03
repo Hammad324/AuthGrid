@@ -64,6 +64,10 @@ model User {
   passwordHash  String
   memberships   Membership[]
   refreshTokens RefreshToken[]
+  isDeleted     Boolean        @default(false)
+  deletedAt     DateTime?
+  isBanned      Boolean        @default(false)
+  bannedAt      DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }

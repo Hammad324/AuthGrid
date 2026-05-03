@@ -16,26 +16,18 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   getHello(@Request() req) {
-    return `hey, ${req.user.name}`;
+    return this.usersService.getProfile(req.user.id);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.usersService.findAll();
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Patch('update-profile')
+  update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(req.user.id, updateUserDto);
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Delete('delete')
+  delete(@Request() req) {
+    return this.usersService.softDelete(req.user.id);
+  }
 }
