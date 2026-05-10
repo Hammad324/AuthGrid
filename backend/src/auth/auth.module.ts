@@ -7,19 +7,40 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AppsModule } from 'src/apps/apps.module';
+import { AuthCryptoService } from './auth.crypto.service';
+import { AuthCryptoModule } from './auth.crypto.module';
 
 @Module({
   imports: [
     PrismaModule,
     PassportModule,
+    AuthCryptoModule,
     forwardRef(() => AppsModule),
-    JwtModule.register({
+
+    JwtModule.registerAsync({
+
       global: true,
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
+      imports: [AuthCryptoModule],
+      inject: [AuthCryptoService],
+      useFactory: (cryptoService: AuthCryptoService) => {
+        return {
+          privateKey: cryptoService.getPrivateKey(),
+          publicKey: cryptoService.getPublicKey(),
+          signOptions: {
+            expiresIn: '1h',
+            algorithm: 'RS256',
+            keyid: process.env.OAUTH_KEYID
+          },
+          verifyOptions: {
+            algorithms: ['RS256']
+          }
+        }
+      }
+
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthRepository, JwtStrategy],
+  providers: [AuthService, AuthRepository, JwtStrategy, AuthCryptoService],
+  exports: [AuthCryptoService]
 })
 export class AuthModule {}

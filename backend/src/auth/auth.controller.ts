@@ -5,11 +5,20 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LogoutDto } from './dto/logout.dto';
 import { AppTokenDto } from './dto/app-token.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { AuthCryptoService } from './auth.crypto.service';
 
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly cryptoService: AuthCryptoService
+  ) {}
+
+  @Get('.well-known/jwks.json') 
+  getJwks() {
+    return this.cryptoService.getJwks();
+  }
 
   @Post('login')
   signIn(@Body() signInDto: SignInDto) {
@@ -21,7 +30,6 @@ export class AuthController {
     return this.authService.rotateRefreshToken(refreshDto.refreshToken);
   }
 
-
   @Post('app/token')
   loginApp(@Body() appTokenDto: AppTokenDto) {
     return this.authService.loginApp(appTokenDto);
@@ -31,6 +39,11 @@ export class AuthController {
   @Post('logout')
   logout(@Body() logoutDto: LogoutDto) {
     return this.authService.logout(logoutDto.refreshToken);
+  }
+
+  @Post('revoke')
+  revokeToken(@Body('token') token: string) {
+    return this.authService.revoke(token);
   }
   
   // @Get()

@@ -77,6 +77,7 @@ model RefreshToken {
   token     String   @unique
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+  isRevoked Boolean  @default(false)
   expiresAt DateTime
   createdAt DateTime @default(now())
 }

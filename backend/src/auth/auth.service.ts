@@ -22,12 +22,17 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
+    if (tokenRecord.isRevoked) {
+      await this.authRepository.RevokeAlluserTokens(tokenRecord.userId);
+      throw new UnauthorizedException('Token reuse detected. All sessions have been terminated.');
+    }
+
     if (new Date() > tokenRecord.expiresAt) {
       await this.authRepository.deleteToken(token);
       throw new UnauthorizedException('Refresh token expired');
     }
 
-    await this.authRepository.deleteToken(token);
+    await this.authRepository.revokeToken(token);
 
     const { user } = tokenRecord;
     const payload = { sub: user.id, name: user.name, email: user.email };
@@ -64,6 +69,7 @@ export class AuthService {
 
     return { accessToken };
   }
+
   async login(signInDto: SignInDto) {
 
     const { email, passwordHash } = signInDto;
@@ -98,6 +104,13 @@ export class AuthService {
 
   async logout(refreshToken: string) {
     if (!refreshToken) return;
-    await this.authRepository.deleteToken(refreshToken);
+    await this.authRepository.revokeToken(refreshToken);
+  }
+
+  async revoke(token: string) {
+    if (!token) return; 
+    try {
+      await this.authRepository.revokeToken(token);
+    } catch (error) {}
   }
 }

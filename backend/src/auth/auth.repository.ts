@@ -39,4 +39,17 @@ export class AuthRepository {
             include: { user: true }
         });
     }
+
+    async revokeToken(token: string) {
+        return this.prisma.refreshToken.update({
+            where: { token },
+            data: { isRevoked: true }
+        });
+    }
+
+    async RevokeAlluserTokens(userId: string) {
+        return this.prisma.refreshToken.deleteMany({
+            where: { userId }
+        })
+    }
 }
