@@ -9,6 +9,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { AppsModule } from 'src/apps/apps.module';
 import { AuthCryptoService } from './auth.crypto.service';
 import { AuthCryptoModule } from './auth.crypto.module';
+import { SessionModule } from '../session/session.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthCryptoModule } from './auth.crypto.module';
     PassportModule,
     AuthCryptoModule,
     forwardRef(() => AppsModule),
+    forwardRef(() => SessionModule),
 
     JwtModule.registerAsync({
 
@@ -41,6 +43,6 @@ import { AuthCryptoModule } from './auth.crypto.module';
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthRepository, JwtStrategy, AuthCryptoService],
-  exports: [AuthCryptoService]
+  exports: [AuthCryptoService, AuthRepository]
 })
 export class AuthModule {}

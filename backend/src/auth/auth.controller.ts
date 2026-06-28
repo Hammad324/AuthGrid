@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign_in.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -6,7 +6,7 @@ import { LogoutDto } from './dto/logout.dto';
 import { AppTokenDto } from './dto/app-token.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { AuthCryptoService } from './auth.crypto.service';
-
+import { Request as ExpressRequest } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -21,8 +21,10 @@ export class AuthController {
   }
 
   @Post('login')
-  signIn(@Body() signInDto: SignInDto) {
-    return this.authService.login(signInDto);
+  signIn(@Body() signInDto: SignInDto, @Request() req) {
+    const userAgent = req.headers['user-agent'] || 'Unknown User-Agent';
+    const ipAddress = (req.headers['x-forwarded-for'] as string) || req.ip || '127.0.0.1';
+    return this.authService.login(signInDto, { userAgent, ipAddress });
   }
 
   @Post('refresh')
@@ -45,24 +47,26 @@ export class AuthController {
   revokeToken(@Body('token') token: string) {
     return this.authService.revoke(token);
   }
-  
-  // @Get()
-  // findAll() {
-  //   return this.authService.findAll();
-  // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.authService.findOne(+id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Get('sessions')
+  async getSessions(@Request() req) {
+    const sessions = await this.authService['sessionService'].getUserSessions(req.user.id);
+    return sessions.map(session => ({
+      ...session,
+      isCurrent: session.id === req.user.sessionId,
+    }));
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-  //   return this.authService.update(+id, updateAuthDto);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Delete('sessions/:id')
+  revokeSession(@Param('id') id: string, @Request() req) {
+    return this.authService['sessionService'].revokeSession(id, req.user.id);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.authService.remove(+id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Post('sessions/revoke-all')
+  revokeAllSessions(@Request() req) {
+    return this.authService['sessionService'].revokeAllSessions(req.user.id);
+  }
 }

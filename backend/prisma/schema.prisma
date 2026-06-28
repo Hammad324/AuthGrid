@@ -63,6 +63,7 @@ model User {
   name          String?
   passwordHash  String
   memberships   Membership[]
+  sessions      Session[]
   refreshTokens RefreshToken[]
   isDeleted     Boolean        @default(false)
   deletedAt     DateTime?
@@ -78,6 +79,25 @@ model RefreshToken {
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   isRevoked Boolean  @default(false)
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model Session {
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceName    String?
+  userAgent     String?
+  ipAddress     String?
+  location      String? // GeoIP resolved (deferred — left null for now)
+  lastActiveAt  DateTime       @default(now())
+  expiresAt     DateTime // hard TTL: 30 days from creation
+  isRevoked     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  refreshTokens RefreshToken[]
+
+  @@index([userId])
 }
